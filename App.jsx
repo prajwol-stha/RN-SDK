@@ -1,35 +1,35 @@
-// import { Button, StyleSheet, Text, View } from 'react-native'
-// import React from 'react'
+import { Button, StyleSheet, Text, View } from 'react-native'
+import React from 'react'
 
-// import { NativeModules } from 'react-native'
-// const {CalendarModule}=NativeModules;
-// console.log(CalendarModule);
+import { NativeModules } from 'react-native'
+const {CalendarModule}=NativeModules;
+console.log(CalendarModule);
 
-// CalendarModule.createCalendarEvent(res=>console.log(res));
+CalendarModule.createCalendarEvent(res=>console.log(res));
 
-// const App = () => {
-//   const createCalendarEventPromise=async ()=>{
-//     try {
-//       var result =await CalendarModule.createCalendarPromise()
-//       console.log(result)
-//     } catch (error) {
-//       console.log(error)
-//     }
-//   }
+const App = () => {
+  const createCalendarEventPromise=async ()=>{
+    try {
+      var result =await CalendarModule.createCalendarPromise()
+      console.log(result)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
-//   return (
-//     <View>
-//       <Text>Hello World</Text>
-//       <Button title='Calendar Event Promise' onPress={createCalendarEventPromise}>
+  return (
+    <View>
+      <Text>Hello World</Text>
+      <Button title='Calendar Event Promise' onPress={createCalendarEventPromise}>
 
-//       </Button>
-//     </View>
-//   )
-// }
+      </Button>
+    </View>
+  )
+}
 
-// export default App
+export default App
 
-// const styles = StyleSheet.create({})
+const styles = StyleSheet.create({})
 
 
 //from docs
@@ -53,17 +53,3 @@
 
 // export default NewModuleButton;
 
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-
-const App = () => {
-  return (
-    <View>
-      <Text>App</Text>
-    </View>
-  )
-}
-
-export default App
-
-const styles = StyleSheet.create({})
