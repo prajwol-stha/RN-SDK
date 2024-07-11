@@ -1,26 +1,29 @@
 package com.sdk;
 
+import android.content.Context;
+import android.os.AsyncTask;
+import android.provider.Settings.Secure;
+
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.uimanager.IllegalViewOperationException;
-import com.facebook.react.bridge.Callback;
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.provider.Settings.Secure;
-import android.content.Context;
-import com.facebook.react.bridge.Callback;
-import android.os.AsyncTask;
+import com.google.android.gms.ads.identifier.AdvertisingIdClient;
+import com.google.android.gms.ads.identifier.AdvertisingIdClient.Info;
+
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.Collections;
+import java.util.List;
 
 public class DeviceInfoModule extends ReactContextBaseJavaModule {
 
     public DeviceInfoModule(ReactApplicationContext reactContext) {
-        super(reactContext); //required by React Native
+        super(reactContext); // required by React Native
     }
 
     @Override
-    //getName is required to define the name of the module represented in JavaScript
+    // getName is required to define the name of the module represented in JavaScript
     public String getName() {
         return "DeviceInfoGet";
     }
@@ -30,13 +33,22 @@ public class DeviceInfoModule extends ReactContextBaseJavaModule {
         getDeviceIDHandler(callback);
     }
 
+    @ReactMethod
+    public void getDeviceIPAddress(final Callback callback) {
+        getDeviceIPAddressHandler(callback);
+    }
+
+    @ReactMethod
+    public void getAAID(final Callback callback) {
+        getAAIDHandler(callback);
+    }
+
     private void getDeviceIDHandler(final Callback callback) {
-        AsyncTask<Void,Void,Void> myAsyncTask = new AsyncTask<Void,Void,Void>() {
+        AsyncTask<Void, Void, Void> myAsyncTask = new AsyncTask<Void, Void, Void>() {
             @Override
-            protected Void doInBackground(final Void ... params) {
+            protected Void doInBackground(final Void... params) {
                 Context context = getReactApplicationContext();
                 String android_id = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
-
                 callback.invoke(null, android_id);
                 return null;
             }
@@ -44,4 +56,57 @@ public class DeviceInfoModule extends ReactContextBaseJavaModule {
         myAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    private void getDeviceIPAddressHandler(final Callback callback) {
+        AsyncTask<Void, Void, String> myAsyncTask = new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(final Void... params) {
+                try {
+                    List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+                    for (NetworkInterface intf : interfaces) {
+                        List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
+                        for (InetAddress addr : addrs) {
+                            if (!addr.isLoopbackAddress()) {
+                                String sAddr = addr.getHostAddress();
+                                boolean isIPv4 = sAddr.indexOf(':') < 0;
+
+                                if (isIPv4) {
+                                    return sAddr;
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(String ipAddress) {
+                if (ipAddress != null) {
+                    callback.invoke(null, ipAddress);
+                } else {
+                    callback.invoke("Unable to retrieve IP address", null);
+                }
+            }
+        };
+        myAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private void getAAIDHandler(final Callback callback) {
+        AsyncTask<Void, Void, Void> myAsyncTask = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(final Void... params) {
+                try {
+                    Info adInfo = AdvertisingIdClient.getAdvertisingIdInfo(getReactApplicationContext());
+                    String aaid = adInfo.getId();
+                    callback.invoke(null, aaid);
+                } catch (Exception e) {
+                    callback.invoke(e.toString(), null);
+                }
+                return null;
+            }
+        };
+        myAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
 }

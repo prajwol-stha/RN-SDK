@@ -1,13 +1,14 @@
 import React from 'react';
 import { NativeModules,StyleSheet,View,Text,Button, TouchableOpacity } from 'react-native'
 
-const DeviceInfo=NativeModules.DeviceInfoGet;
-console.log(DeviceInfo);
+const {DeviceInfoGet}=NativeModules
 
+console.log(NativeModules.DeviceInfoGet)
 const App = () => {
   function handleGetDeviceId(){
     console.log('Getting device id...');
-    DeviceInfo.getDeviceID((err, deviceID) => {
+    console.log(DeviceInfoGet.getConstants())
+    DeviceInfoGet.getDeviceID((err, deviceID) => {
                     if (err) {
                         // error
                     } else {
@@ -15,11 +16,37 @@ const App = () => {
                     }
                 })
   }
+  function handleGetIpAddress(){
+    console.log('Getting Ip Address...');
+    DeviceInfoGet.getDeviceIPAddress((error,ipAddress)=>{
+      if (!error) {
+        console.log("IP Address: ", ipAddress);
+    } else {
+        console.error(error);
+    }
+    })
+  }
+  function handleGetAaid(){
+    console.log('Getting Ip Address...');
+    DeviceInfoGet.getAAID((error, aaid) => {
+      if (!error) {
+          console.log("Google Advertising ID: ", aaid);
+      } else {
+          console.error(error);
+      }
+  });
+  }
 
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={handleGetDeviceId} style={styles.button}>
         <Text>Get Device Info</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handleGetIpAddress} style={styles.button}>
+        <Text>Get IP Address</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handleGetAaid} style={styles.button}>
+        <Text>Get AAID</Text>
       </TouchableOpacity>
     </View>
   )
@@ -36,10 +63,10 @@ const styles = StyleSheet.create({
   button:{
     // flex:1,
     width:160,
-    backgroundColor:'red',
+    backgroundColor:'#119922',
     alignItems:'center',
     padding:8,
-    borderRadius:8
+    borderRadius:8,
+    margin:8,
   }
 })
-
