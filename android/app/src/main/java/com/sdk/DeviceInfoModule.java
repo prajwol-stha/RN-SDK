@@ -2,7 +2,10 @@ package com.sdk;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.provider.Settings.Secure;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
 
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -22,6 +25,10 @@ public class DeviceInfoModule extends ReactContextBaseJavaModule {
         super(reactContext); // required by React Native
     }
 
+    @ReactMethod
+    public void getOSVersion(final Callback callback) {
+        callback.invoke(null, Build.VERSION.RELEASE);
+    }
     @Override
     // getName is required to define the name of the module represented in JavaScript
     public String getName() {
@@ -41,6 +48,31 @@ public class DeviceInfoModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void getAAID(final Callback callback) {
         getAAIDHandler(callback);
+    }
+
+    @ReactMethod
+    public void getDeviceBrand(final Callback callback) {
+        callback.invoke(null, Build.BRAND);
+    }
+
+    @ReactMethod
+    public void getDeviceModel(final Callback callback) {
+        callback.invoke(null, Build.MODEL);
+    }
+
+    @ReactMethod
+    public void getScreenSize(final Callback callback) {
+        WindowManager windowManager = (WindowManager) getReactApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        if (windowManager != null) {
+            windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+            int width = displayMetrics.widthPixels;
+            int height = displayMetrics.heightPixels;
+            float density = displayMetrics.density;
+            callback.invoke(null, width, height, density);
+        } else {
+            callback.invoke("Unable to retrieve screen size", null);
+        }
     }
 
     private void getDeviceIDHandler(final Callback callback) {
