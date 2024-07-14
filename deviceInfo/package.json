@@ -1,0 +1,15 @@
+{
+  "name": "react-native-get-deviceinfo",
+  "version": "1.0.0",
+  "description": "Gets device info such as ip address, device address, AAID, os version, etc.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Prajwol Shrestha",
+  "license": "ISC",
+  "peerDependencies": {
+    "react": "18.2.0",
+    "react-native": "0.74.3"
+  }
+}

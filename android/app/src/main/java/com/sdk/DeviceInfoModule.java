@@ -24,7 +24,6 @@ public class DeviceInfoModule extends ReactContextBaseJavaModule {
     public DeviceInfoModule(ReactApplicationContext reactContext) {
         super(reactContext); // required by React Native
     }
-
     @ReactMethod
     public void getOSVersion(final Callback callback) {
         callback.invoke(null, Build.VERSION.RELEASE);
@@ -32,7 +31,7 @@ public class DeviceInfoModule extends ReactContextBaseJavaModule {
     @Override
     // getName is required to define the name of the module represented in JavaScript
     public String getName() {
-        return "DeviceInfoGet";
+        return "GetDeviceInfo";
     }
 
     @ReactMethod
